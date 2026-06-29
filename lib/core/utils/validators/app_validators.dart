@@ -1,5 +1,3 @@
-import 'package:get/get.dart';
-
 class AppValidators {
   static String? validateEmail(String? value) {
     if (value == null || value.isEmpty) return 'Email is required';
