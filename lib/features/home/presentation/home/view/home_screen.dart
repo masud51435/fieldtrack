@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../controller/home_controller.dart';
 import '../widgets/home_header.dart';
+import '../widgets/home_shimmer.dart';
 import '../widgets/progress_card.dart';
 import '../widgets/task_card.dart';
 import '../widgets/task_filter_chip.dart';
@@ -20,8 +21,8 @@ class HomeScreen extends GetView<HomeController> {
       backgroundColor: isDark ? AppColors.bgDark : AppColors.bgLight,
       body: SafeArea(
         child: Obx(() {
-          if (controller.isLoading.value && controller.allTodos.isEmpty) {
-            return const Center(child: CircularProgressIndicator());
+          if (controller.isLoading.value || controller.allTodos.isEmpty) {
+            return const HomeShimmer();
           }
 
           return RefreshIndicator(
