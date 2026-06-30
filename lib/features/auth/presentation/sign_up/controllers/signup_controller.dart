@@ -3,14 +3,14 @@ import 'package:get/get.dart';
 
 import '../../../../../app/routes/routes.dart';
 import '../../../../../core/utils/device/device_utility.dart';
-import '../../../domain/usecases/login_usecase.dart';
+import '../../../domain/usecases/register_usecase.dart';
 
-class LoginController extends GetxController {
-  final LoginUseCase loginUseCase;
-
-  LoginController({required this.loginUseCase});
+class SignUpController extends GetxController {
+  final RegisterUseCase registerUseCase;
+  SignUpController({required this.registerUseCase});
 
   // Text Controllers
+  final nameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
@@ -21,6 +21,7 @@ class LoginController extends GetxController {
 
   @override
   void onClose() {
+    nameController.dispose();
     emailController.dispose();
     passwordController.dispose();
     super.onClose();
@@ -29,19 +30,18 @@ class LoginController extends GetxController {
   void togglePasswordVisibility() =>
       isPasswordVisible.value = !isPasswordVisible.value;
 
-  void goToForgotPassword() {}
+  void goToLogin() => Get.back();
 
-  void goToRegister() => Get.toNamed(BaseRoute.signUp);
-
-  Future<void> login() async {
+  Future<void> register() async {
     if (!formKey.currentState!.validate()) return;
 
     DeviceUtility.hideKeyboard();
     isLoading.value = true;
 
     try {
-      await loginUseCase(
-        LoginParams(
+      await registerUseCase(
+        RegisterParams(
+          fullName: nameController.text.trim(),
           email: emailController.text.trim(),
           password: passwordController.text,
         ),
@@ -49,9 +49,9 @@ class LoginController extends GetxController {
 
       // Navigate to Dashboard
       Get.offAllNamed(BaseRoute.dashboard);
-    } catch (e) {
+    } catch (e, stackTrace) {
       // Errors are handled by ApiErrorHandler + ToastService automatically
-      debugPrint("Login Error: $e");
+      debugPrint("Register Error: $e$stackTrace");
     } finally {
       isLoading.value = false;
     }
