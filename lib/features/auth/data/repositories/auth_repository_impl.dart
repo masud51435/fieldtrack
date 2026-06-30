@@ -14,6 +14,7 @@ class AuthRepositoryImpl implements AuthRepository {
     required this.authPersistData,
   });
 
+  // login method
   @override
   Future<UserEntity> login({
     required String email,
@@ -36,6 +37,7 @@ class AuthRepositoryImpl implements AuthRepository {
     return userEntity;
   }
 
+  // register method
   @override
   Future<UserEntity> register({
     required String email,
@@ -61,12 +63,14 @@ class AuthRepositoryImpl implements AuthRepository {
     return userEntity;
   }
 
+  // refresh token method
   @override
   Future<void> logout() async {
     await remoteDataSource.logout();
     await authPersistData.deleteAuthData();
   }
 
+  // get current user method
   @override
   Future<Map<String, dynamic>> getCurrentUser() async {
     return await remoteDataSource.getCurrentUser();

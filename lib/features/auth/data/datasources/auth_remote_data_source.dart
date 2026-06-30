@@ -18,6 +18,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   AuthRemoteDataSourceImpl({required this.client});
 
+  // login method
   @override
   Future<LoginResponseModel> login(LoginRequestModel request) async {
     return await client.request(
@@ -28,6 +29,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     );
   }
 
+  // register method
   @override
   Future<LoginResponseModel> register(Map<String, dynamic> data) async {
     return await client.request(
@@ -38,6 +40,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     );
   }
 
+  // refresh token method
   @override
   Future<AuthData> refreshToken(String refreshToken) async {
     return await client.request(
@@ -48,6 +51,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     );
   }
 
+  // logout method
   @override
   Future<void> logout() async {
     await client.request(
@@ -56,6 +60,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     );
   }
 
+  // get current user method
   @override
   Future<Map<String, dynamic>> getCurrentUser() async {
     return await client.request(
