@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import 'app/bindings/initial_bindings.dart';
@@ -21,21 +22,28 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      title: 'FieldTrack',
-      debugShowCheckedModeBanner: false,
+    return ScreenUtilInit(
+      designSize: const Size(375, 812), // Standard iPhone design size
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (_, child) {
+        return GetMaterialApp(
+          title: 'FieldTrack',
+          debugShowCheckedModeBanner: false,
 
-      // Global Bindings
-      initialBinding: InitialBindings(),
+          // Global Bindings
+          initialBinding: InitialBindings(),
 
-      // Routing
-      initialRoute: BaseRoute.splash,
-      getPages: routesHandler,
+          // Routing
+          initialRoute: BaseRoute.login,
+          getPages: routesHandler,
 
-      // Theme
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.light,
+          // Theme
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: ThemeMode.system,
+        );
+      },
     );
   }
 }

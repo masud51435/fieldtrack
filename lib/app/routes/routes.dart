@@ -3,7 +3,6 @@ class BaseRoute {
   static const String onBoarding = "/onboarding";
   static const String login = "/login";
   static const String signUp = "/signUp";
-  static const String forgotPassword = "/forgotPassword";
   static const String verifyOtp = "/verifyOtp";
   static const String dashboard = "/dashboard";
   static const String homeScreen = "/homeScreen";
