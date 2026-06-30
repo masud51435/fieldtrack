@@ -1,13 +1,20 @@
 class AuthData {
-  final String token;
+  final String accessToken;
+  final String refreshToken;
 
-  AuthData({required this.token});
+  AuthData({required this.accessToken, required this.refreshToken});
 
   factory AuthData.fromJson(Map<String, dynamic> json) {
-    return AuthData(token: json['token'] ?? '');
+    return AuthData(
+      accessToken: json['access_token'] ?? '',
+      refreshToken: json['refresh_token'] ?? '',
+    );
   }
 
   Map<String, dynamic> toJson() {
-    return {'token': token};
+    return {
+      'access_token': accessToken,
+      'refresh_token': refreshToken,
+    };
   }
 }
