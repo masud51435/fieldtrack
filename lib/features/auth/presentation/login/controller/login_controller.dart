@@ -31,7 +31,9 @@ class LoginController extends GetxController {
   void togglePasswordVisibility() =>
       isPasswordVisible.value = !isPasswordVisible.value;
 
-  void goToForgotPassword() => Get.toNamed(BaseRoute.forgotPassword);
+  void goToForgotPassword() {}
+
+  void goToRegister() => Get.toNamed(BaseRoute.signUp);
 
   Future<void> login() async {
     if (!formKey.currentState!.validate()) return;
@@ -47,9 +49,12 @@ class LoginController extends GetxController {
         ),
       );
 
-      // Save token to persistence
+      // Save tokens to persistence
       await Get.find<AuthPersistData>().setAuthData(
-        AuthData(token: user.token),
+        AuthData(
+          accessToken: user.accessToken,
+          refreshToken: user.refreshToken,
+        ),
       );
 
       // Navigate to Dashboard (Example)

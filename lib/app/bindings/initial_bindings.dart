@@ -28,9 +28,25 @@ class InitialBindings extends Bindings {
         tokenProvider: () async {
           try {
             final authData = await Get.find<AuthPersistData>().getAuthData();
-            return authData.token;
+            return authData.accessToken;
           } catch (_) {
             return null;
+          }
+        },
+        onRefreshToken: () async {
+          try {
+            final authPersistData = Get.find<AuthPersistData>();
+            final authData = await authPersistData.getAuthData();
+            final remoteDataSource = Get.find<AuthRemoteDataSource>();
+
+            final newAuthData = await remoteDataSource.refreshToken(
+              authData.refreshToken,
+            );
+
+            await authPersistData.setAuthData(newAuthData);
+            return true;
+          } catch (e) {
+            return false;
           }
         },
       ),
@@ -45,7 +61,10 @@ class InitialBindings extends Bindings {
       fenix: true,
     );
     Get.lazyPut<AuthRepository>(
-      () => AuthRepositoryImpl(remoteDataSource: Get.find()),
+      () => AuthRepositoryImpl(
+        remoteDataSource: Get.find(),
+        authPersistData: Get.find(),
+      ),
       fenix: true,
     );
   }
