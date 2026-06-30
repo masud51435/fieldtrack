@@ -1,12 +1,7 @@
 import 'package:get/get.dart';
 
-import '../../../core/network/api_client.dart';
 import '../../custom_bottom_navbar/controller/bottom_navbar_controller.dart';
-import '../../home/data/datasources/home_remote_data_source.dart';
-import '../../home/data/repositories/home_repository_impl.dart';
-import '../../home/domain/repositories/home_repository.dart';
 import '../../home/domain/usecases/get_home_data_usecase.dart';
-import '../../home/domain/usecases/sync_todos_usecase.dart';
 import '../../home/domain/usecases/update_todo_usecase.dart';
 import '../../home/presentation/home/controller/home_controller.dart';
 
