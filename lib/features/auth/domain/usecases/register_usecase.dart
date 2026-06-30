@@ -1,6 +1,6 @@
-import 'package:fieldtrack/core/usecases/usecase.dart';
-import 'package:fieldtrack/features/auth/domain/entities/user_entity.dart';
-import 'package:fieldtrack/features/auth/domain/repositories/auth_repository.dart';
+import '../../../../core/usecases/usecase.dart';
+import '../entities/user_entity.dart';
+import '../repositories/auth_repository.dart';
 
 class RegisterParams {
   final String email;
