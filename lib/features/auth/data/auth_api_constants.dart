@@ -1,7 +1,7 @@
 class AuthApiConstants {
-  static const String login = "/login";
-  static const String forgotPassword = "/forgot-password";
-  static const String getCountries = "/get-countries";
-  static const String registerOtpSend = "/register/otp/send";
-  // Add other auth related endpoints here
+  static const String register = "/auth/register";
+  static const String login = "/auth/login";
+  static const String refresh = "/auth/refresh";
+  static const String logout = "/auth/logout";
+  static const String me = "/me";
 }

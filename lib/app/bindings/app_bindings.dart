@@ -7,13 +7,6 @@ class SplashBinding extends Bindings {
   }
 }
 
-class OnboardingBinding extends Bindings {
-  @override
-  void dependencies() {
-    // Get.lazyPut<OnboardingController>(() => OnboardingController());
-  }
-}
-
 class ProfileBinding extends Bindings {
   @override
   void dependencies() {
