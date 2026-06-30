@@ -1,18 +1,13 @@
-import 'package:get/get.dart';
+import 'package:fieldtrack/app/routes/routes.dart';
+import 'package:fieldtrack/app/routes/routes_config.dart';
+import 'package:fieldtrack/features/auth/presentation/login/binding/login_binding.dart';
+import 'package:get/get_navigation/src/routes/get_route.dart';
+import 'package:get/get_navigation/src/routes/transitions_type.dart';
 
-import '../../features/auth/presentation/login/binding/login_binding.dart';
-import '../../features/home/presentation/home/binding/home_binding.dart';
-import '../bindings/app_bindings.dart';
-import 'routes.dart';
-import 'routes_config.dart';
+import '../../features/auth/presentation/sign_up/bindings/signup_binding.dart';
+import '../../features/dashboard/binding/dashboard_binding.dart';
 
 List<GetPage> routesHandler = [
-  GetPage(
-    name: BaseRoute.splash,
-    page: () => RoutesConfig.splash,
-    binding: SplashBinding(),
-    transition: Transition.fadeIn,
-  ),
   GetPage(
     name: BaseRoute.login,
     page: () => RoutesConfig.login,
@@ -20,21 +15,20 @@ List<GetPage> routesHandler = [
     transition: Transition.fadeIn,
   ),
   GetPage(
+    name: BaseRoute.signUp,
+    page: () => RoutesConfig.signUp,
+    binding: SignUpBinding(),
+    transition: Transition.fadeIn,
+  ),
+  GetPage(
+    name: BaseRoute.dashboard,
+    page: () => RoutesConfig.dashboard,
+    binding: DashboardBinding(),
+    transition: Transition.fadeIn,
+  ),
+  GetPage(
     name: BaseRoute.homeScreen,
     page: () => RoutesConfig.homeScreen,
-    binding: HomeBinding(),
-    transition: Transition.fadeIn,
-  ),
-  GetPage(
-    name: BaseRoute.profileScreen,
-    page: () => RoutesConfig.profileScreen,
-    binding: ProfileBinding(),
-    transition: Transition.fadeIn,
-  ),
-  GetPage(
-    name: BaseRoute.productDetailScreen,
-    page: () => RoutesConfig.productDetailScreen,
-    binding: ProductDetailsBinding(),
     transition: Transition.fadeIn,
   ),
 ];
