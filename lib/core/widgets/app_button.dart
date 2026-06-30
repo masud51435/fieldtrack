@@ -9,6 +9,7 @@ class AppButton extends StatelessWidget {
   final double? height;
   final Color? backgroundColor;
   final Color? textColor;
+  final IconData? iconData;
 
   const AppButton({
     super.key,
@@ -19,13 +20,14 @@ class AppButton extends StatelessWidget {
     this.height,
     this.backgroundColor,
     this.textColor,
+    this.iconData,
   });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: width ?? double.infinity,
-      height: height ?? 48.h,
+      height: height ?? 56.h,
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
         style: backgroundColor != null
@@ -43,13 +45,26 @@ class AppButton extends StatelessWidget {
                   color: textColor ?? Colors.white,
                 ),
               )
-            : Text(
-                text,
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.bold,
-                  color: textColor,
-                ),
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (iconData != null) ...[
+                    Icon(
+                      iconData,
+                      color: textColor ?? Colors.white,
+                      size: 20.sp,
+                    ),
+                    SizedBox(width: 8.w),
+                  ],
+                  Text(
+                    text,
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                      color: textColor,
+                    ),
+                  ),
+                ],
               ),
       ),
     );
