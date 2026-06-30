@@ -7,8 +7,15 @@ import '../utils/snackbar/toast_service.dart';
 class AppInterceptor extends Interceptor {
   final String tag;
   final Future<String?> Function()? tokenProvider;
+  final Future<bool> Function()? onRefreshToken;
+  final Dio? dio;
 
-  AppInterceptor({this.tag = 'Dio', this.tokenProvider});
+  AppInterceptor({
+    this.tag = 'Dio',
+    this.tokenProvider,
+    this.onRefreshToken,
+    this.dio,
+  });
 
   @override
   Future<void> onRequest(
@@ -50,7 +57,26 @@ class AppInterceptor extends Interceptor {
   }
 
   @override
-  void onError(DioException err, ErrorInterceptorHandler handler) {
+  Future<void> onError(
+    DioException err,
+    ErrorInterceptorHandler handler,
+  ) async {
+    // Handle 401 Unauthorized
+    if (err.response?.statusCode == 401 &&
+        dio != null &&
+        onRefreshToken != null) {
+      final success = await onRefreshToken!();
+      if (success) {
+        // Retry the original request
+        try {
+          final response = await _retry(err.requestOptions);
+          return handler.resolve(response);
+        } catch (e) {
+          return handler.next(err);
+        }
+      }
+    }
+
     // Handle and log Dio errors centrally
     final failure = DioExceptionHandler.handle(err);
 
@@ -81,6 +107,27 @@ class AppInterceptor extends Interceptor {
         error: failure,
       ),
     );
-    super.onError(err, handler);
+  }
+
+  Future<Response<dynamic>> _retry(RequestOptions requestOptions) async {
+    final options = Options(
+      method: requestOptions.method,
+      headers: requestOptions.headers,
+    );
+
+    // Update the Authorization header with the new token
+    if (tokenProvider != null) {
+      final token = await tokenProvider!();
+      if (token != null && token.isNotEmpty) {
+        options.headers?['Authorization'] = 'Bearer $token';
+      }
+    }
+
+    return dio!.request<dynamic>(
+      requestOptions.path,
+      data: requestOptions.data,
+      queryParameters: requestOptions.queryParameters,
+      options: options,
+    );
   }
 }

@@ -12,15 +12,25 @@ class DioClient implements ApiClient {
     required String baseUrl,
     String tag = 'Dio',
     Future<String?> Function()? tokenProvider,
+    Future<bool> Function()? onRefreshToken,
   }) {
-    _client = Dio()
-      ..options.baseUrl = baseUrl
-      ..options.connectTimeout = const Duration(seconds: 30)
-      ..options.receiveTimeout = const Duration(seconds: 30)
-      ..options.followRedirects = false
-      ..interceptors.add(
-        AppInterceptor(tag: tag, tokenProvider: tokenProvider),
-      );
+    _client = Dio(
+      BaseOptions(
+        baseUrl: baseUrl,
+        connectTimeout: const Duration(seconds: 30),
+        receiveTimeout: const Duration(seconds: 30),
+        followRedirects: false,
+      ),
+    );
+
+    _client.interceptors.add(
+      AppInterceptor(
+        tag: tag,
+        tokenProvider: tokenProvider,
+        onRefreshToken: onRefreshToken,
+        dio: _client,
+      ),
+    );
   }
 
   @override
