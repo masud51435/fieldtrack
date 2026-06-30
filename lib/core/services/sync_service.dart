@@ -18,6 +18,7 @@ class SyncService extends GetxService {
   // Reactive state for UI
   final pendingChanges = <Map<String, dynamic>>[].obs;
   final isOffline = false.obs;
+  final lastSyncTime = Rxn<DateTime>();
 
   SyncService({
     required this.syncTodosUseCase,
@@ -27,6 +28,12 @@ class SyncService extends GetxService {
   Future<SyncService> init() async {
     _syncBox = await Hive.openBox('pending_sync');
     _updatePendingList();
+
+    // Load last sync time from box
+    final storedTime = _syncBox.get('last_sync_timestamp');
+    if (storedTime != null) {
+      lastSyncTime.value = DateTime.parse(storedTime);
+    }
 
     // Monitor connectivity
     _connectivitySubscription = _connectivity.onConnectivityChanged.listen((
@@ -90,6 +97,7 @@ class SyncService extends GetxService {
         await _syncBox.delete(todoId);
         _updatePendingList();
       }
+      _updateLastSyncTime();
     } catch (e) {
       // API FAILED (Timeout, Server Error, etc.): Save to queue
       debugPrint("Individual update failed, adding to sync queue: $e");
@@ -134,10 +142,17 @@ class SyncService extends GetxService {
       await syncTodosUseCase(changes);
       await _syncBox.clear();
       _updatePendingList();
+      _updateLastSyncTime();
       debugPrint("Bulk sync successful: ${changes.length} items");
     } catch (e) {
       debugPrint("Bulk sync failed: $e");
     }
+  }
+
+  void _updateLastSyncTime() {
+    final now = DateTime.now();
+    lastSyncTime.value = now;
+    _syncBox.put('last_sync_timestamp', now.toIso8601String());
   }
 
   int get pendingCount => pendingChanges.length;

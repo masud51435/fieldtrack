@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/services/sync_service.dart';
+import '../../../core/utils/helpers/formatter.dart';
 
 class SyncSummaryCard extends GetView<SyncService> {
   const SyncSummaryCard({super.key});
@@ -52,7 +53,7 @@ class SyncSummaryCard extends GetView<SyncService> {
                     ),
                   ),
                   Text(
-                    "Last synced today, 9:45 AM",
+                    "Last synced: ${AppFormatter.formatLastSync(controller.lastSyncTime.value)}",
                     style: TextStyle(
                       fontSize: 12.sp,
                       color: isDark
