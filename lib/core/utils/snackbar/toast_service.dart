@@ -1,31 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
 import '../../constants/app_colors.dart';
 
 class ToastService {
-  static FToast? _fToast;
-
-  static BuildContext? get _context => Get.context;
-
-  static void _ensureInitialized() {
-    if (_fToast == null && _context != null) {
-      _fToast = FToast()..init(_context!);
-    }
-  }
-
-  static void showSuccess(
-    String message, {
-    Color? bgColor,
-    ToastGravity? gravity,
-  }) {
+  static void showSuccess(String message, {Color? bgColor}) {
     _showToast(
       message: message,
       icon: Icons.check_circle,
       bgColor: bgColor ?? AppColors.primary,
-      gravity: gravity,
     );
   }
 
@@ -37,39 +21,34 @@ class ToastService {
     required String message,
     required IconData icon,
     required Color bgColor,
-    ToastGravity? gravity,
   }) {
-    _ensureInitialized();
-    if (_fToast == null) return;
-
-    final toast = Container(
-      margin: .symmetric(horizontal: 10.w, vertical: 0),
-      padding: .symmetric(horizontal: 16.w, vertical: 10.h),
-      decoration: BoxDecoration(color: bgColor, borderRadius: .circular(12.w)),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
+    Get.snackbar(
+      '',
+      '',
+      titleText: const SizedBox.shrink(),
+      messageText: Row(
         children: [
-          Icon(icon, color: AppColors.white, size: 22.sp),
-          SizedBox(width: 10.w),
-          Flexible(
+          Icon(icon, color: Colors.white, size: 24.sp),
+          SizedBox(width: 12.w),
+          Expanded(
             child: Text(
               message,
               style: TextStyle(
-                color: AppColors.white,
-                fontSize: 15.sp,
-                overflow: TextOverflow.ellipsis,
+                color: Colors.white,
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w500,
               ),
-              maxLines: 2,
             ),
           ),
         ],
       ),
-    );
-
-    _fToast!.showToast(
-      child: toast,
-      gravity: gravity ?? ToastGravity.BOTTOM,
-      toastDuration: const Duration(seconds: 2),
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: bgColor,
+      margin: EdgeInsets.all(16.w),
+      borderRadius: 12.w,
+      duration: const Duration(seconds: 3),
+      isDismissible: true,
+      dismissDirection: DismissDirection.horizontal,
     );
   }
 }
