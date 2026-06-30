@@ -1,68 +1,93 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../../../core/constants/app_colors.dart';
 import '../controller/home_controller.dart';
-import '../widgets/category_grid.dart';
-import '../widgets/home_banner_slider.dart';
-import '../widgets/product_section.dart';
+import '../widgets/home_header.dart';
+import '../widgets/progress_card.dart';
+import '../widgets/task_card.dart';
+import '../widgets/task_filter_chip.dart';
 
 class HomeScreen extends GetView<HomeController> {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: AppColors.white,
-      body: Obx(() {
-        if (controller.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
-        }
+      backgroundColor: isDark ? AppColors.bgDark : AppColors.bgLight,
+      body: SafeArea(
+        child: Obx(() {
+          if (controller.isLoading.value && controller.allTodos.isEmpty) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-        return RefreshIndicator(
-          onRefresh: controller.refreshData,
-          child: CustomScrollView(
-            slivers: [
-              // Banner Slider
-              SliverToBoxAdapter(
-                child: HomeBannerSlider(banners: controller.banners),
-              ),
+          return RefreshIndicator(
+            onRefresh: controller.refreshData,
+            child: CustomScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              slivers: [
+                // Header
+                const SliverToBoxAdapter(child: HomeHeader()),
 
-              // Categories
-              const SliverToBoxAdapter(
-                child: Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Text(
-                    'Trending Categories',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                // Progress Card
+                const SliverToBoxAdapter(child: ProgressCard()),
+
+                // Filters
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(24.w, 24.h, 24.w, 16.h),
+                    child: Row(
+                      children: [
+                        const TaskFilterChip(label: 'All'),
+                        SizedBox(width: 12.w),
+                        const TaskFilterChip(label: 'Pending'),
+                        SizedBox(width: 12.w),
+                        const TaskFilterChip(label: 'Completed'),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              SliverToBoxAdapter(
-                child: CategoryGrid(categories: controller.trendingCategories),
-              ),
 
-              // Products Sections
-              SliverToBoxAdapter(
-                child: ProductSection(
-                  title: 'Flash Sale',
-                  products: controller.flashSaleProducts,
+                // Task List
+                SliverPadding(
+                  padding: EdgeInsets.symmetric(horizontal: 24.w),
+                  sliver: controller.filteredTodos.isEmpty
+                      ? SliverToBoxAdapter(
+                          child: Center(
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 40.h),
+                              child: Text(
+                                'No tasks found',
+                                style: TextStyle(
+                                  color: isDark
+                                      ? AppColors.textSecondaryDark
+                                      : AppColors.textSecondaryLight,
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      : SliverList(
+                          delegate: SliverChildBuilderDelegate((
+                            context,
+                            index,
+                          ) {
+                            final todo = controller.filteredTodos[index];
+                            return TaskCard(todo: todo);
+                          }, childCount: controller.filteredTodos.length),
+                        ),
                 ),
-              ),
 
-              SliverToBoxAdapter(
-                child: ProductSection(
-                  title: 'Trending Products',
-                  products: controller.trendingProducts,
-                ),
-              ),
-
-              // Bottom Spacing
-              const SliverToBoxAdapter(child: SizedBox(height: 50)),
-            ],
-          ),
-        );
-      }),
+                // Bottom spacing for navbar
+                SliverToBoxAdapter(child: SizedBox(height: 100.h)),
+              ],
+            ),
+          );
+        }),
+      ),
     );
   }
 }

@@ -12,4 +12,23 @@ class HomeRepositoryImpl implements HomeRepository {
     final response = await remoteDataSource.getHomeData();
     return response.toEntity();
   }
+
+  @override
+  Future<TodoEntity> updateTodo(
+    String id,
+    bool isCompleted,
+    String updatedAt,
+  ) async {
+    final response = await remoteDataSource.updateTodo(
+      id,
+      isCompleted,
+      updatedAt,
+    );
+    return response.toEntity();
+  }
+
+  @override
+  Future<void> syncTodos(List<Map<String, dynamic>> changes) async {
+    await remoteDataSource.syncTodos(changes);
+  }
 }

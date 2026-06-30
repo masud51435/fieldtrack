@@ -3,10 +3,16 @@ import 'package:get/get.dart';
 import '../../core/network/api_client.dart';
 import '../../core/network/dio_client.dart';
 import '../../core/network/links.dart';
+import '../../core/services/sync_service.dart';
 import '../../core/storage/auth_persist_data.dart';
 import '../../features/auth/data/datasources/auth_remote_data_source.dart';
 import '../../features/auth/data/repositories/auth_repository_impl.dart';
 import '../../features/auth/domain/repositories/auth_repository.dart';
+import '../../features/home/data/datasources/home_remote_data_source.dart';
+import '../../features/home/data/repositories/home_repository_impl.dart';
+import '../../features/home/domain/repositories/home_repository.dart';
+import '../../features/home/domain/usecases/sync_todos_usecase.dart';
+import '../../features/home/domain/usecases/update_todo_usecase.dart';
 
 class InitialBindings extends Bindings {
   @override
@@ -66,6 +72,27 @@ class InitialBindings extends Bindings {
         authPersistData: Get.find(),
       ),
       fenix: true,
+    );
+
+    // 4. Global Home/Sync Dependencies
+    Get.lazyPut<HomeRemoteDataSource>(
+      () =>
+          HomeRemoteDataSourceImpl(client: Get.find<ApiClient>(tag: 'secure')),
+      fenix: true,
+    );
+    Get.lazyPut<HomeRepository>(
+      () => HomeRepositoryImpl(remoteDataSource: Get.find()),
+      fenix: true,
+    );
+    Get.lazyPut(() => SyncTodosUseCase(Get.find()), fenix: true);
+    Get.lazyPut(() => UpdateTodoUseCase(Get.find()), fenix: true);
+
+    Get.putAsync(
+      () => SyncService(
+        syncTodosUseCase: Get.find(),
+        updateTodoUseCase: Get.find(),
+      ).init(),
+      permanent: true,
     );
   }
 }

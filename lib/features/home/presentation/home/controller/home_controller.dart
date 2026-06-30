@@ -1,27 +1,33 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
+import '../../../../../core/services/sync_service.dart';
 import '../../../../../core/usecases/usecase.dart';
 import '../../../domain/entities/home_entity.dart';
 import '../../../domain/usecases/get_home_data_usecase.dart';
+import '../../../domain/usecases/update_todo_usecase.dart';
 
 class HomeController extends GetxController {
   final GetHomeDataUseCase getHomeDataUseCase;
+  final UpdateTodoUseCase updateTodoUseCase;
+  final _syncService = Get.find<SyncService>();
 
-  HomeController({required this.getHomeDataUseCase});
+  HomeController({
+    required this.getHomeDataUseCase,
+    required this.updateTodoUseCase,
+  });
 
   // State
   final isLoading = false.obs;
-  final banners = <BannerEntity>[].obs;
-  final coupon = Rxn<CouponEntity>();
-  final trendingCategories = <CategoryEntity>[].obs;
-  final popularBrands = <BrandEntity>[].obs;
-  final providers = <ProviderEntity>[].obs;
-  final flashSaleProducts = <ProductEntity>[].obs;
-  final trendingProducts = <ProductEntity>[].obs;
-  final bestSellingProducts = <ProductEntity>[].obs;
-  final latestProducts = <ProductEntity>[].obs;
-  final flashSaleMeta = Rxn<FlashSaleMetaEntity>();
+  final allTodos = <TodoEntity>[].obs;
+  final filteredTodos = <TodoEntity>[].obs;
+  final selectedFilter = 'All'.obs;
+
+  // Progress calculations
+  int get completedCount => allTodos.where((t) => t.isCompleted).length;
+  int get totalCount => allTodos.length;
+  double get progressPercentage =>
+      totalCount == 0 ? 0 : completedCount / totalCount;
 
   @override
   void onInit() {
@@ -33,25 +39,55 @@ class HomeController extends GetxController {
     isLoading.value = true;
     try {
       final homeData = await getHomeDataUseCase(NoParams());
-
-      banners.assignAll(homeData.banners);
-      coupon.value = homeData.coupon;
-      trendingCategories.assignAll(homeData.trendingCategories);
-      popularBrands.assignAll(homeData.popularBrands);
-      providers.assignAll(homeData.providers);
-
-      flashSaleProducts.assignAll(homeData.products.flashSaleProducts);
-      trendingProducts.assignAll(homeData.products.trendingProducts);
-      bestSellingProducts.assignAll(homeData.products.bestSellingProducts);
-      latestProducts.assignAll(homeData.products.latestProducts);
-
-      flashSaleMeta.value = homeData.flashSaleMeta;
+      allTodos.assignAll(homeData.todos);
+      _applyFilter();
     } catch (e) {
       if (kDebugMode) {
         debugPrint("Home Load Error: $e");
       }
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  Future<void> toggleTodo(TodoEntity todo) async {
+    final oldStatus = todo.isCompleted;
+    final newStatus = !oldStatus;
+
+    // 1. Optimistic UI Update
+    final index = allTodos.indexWhere((t) => t.id == todo.id);
+    if (index != -1) {
+      allTodos[index] = TodoEntity(
+        id: todo.id,
+        title: todo.title,
+        description: todo.description,
+        isCompleted: newStatus,
+        dueAt: todo.dueAt,
+        createdAt: todo.createdAt,
+        updatedAt: DateTime.now().toIso8601String(),
+      );
+      _applyFilter();
+    }
+
+    // 2. Process update (Try PATCH if online, otherwise save to Queue)
+    await _syncService.processUpdate(todo.id, newStatus, todo.title);
+
+    // Note: SyncService.addChange calls syncNow() internally,
+    // which tries to hit the API if online.
+  }
+
+  void setFilter(String filter) {
+    selectedFilter.value = filter;
+    _applyFilter();
+  }
+
+  void _applyFilter() {
+    if (selectedFilter.value == 'All') {
+      filteredTodos.assignAll(allTodos);
+    } else if (selectedFilter.value == 'Pending') {
+      filteredTodos.assignAll(allTodos.where((t) => !t.isCompleted));
+    } else if (selectedFilter.value == 'Completed') {
+      filteredTodos.assignAll(allTodos.where((t) => t.isCompleted));
     }
   }
 

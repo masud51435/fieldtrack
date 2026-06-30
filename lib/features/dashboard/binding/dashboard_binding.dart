@@ -6,6 +6,8 @@ import '../../home/data/datasources/home_remote_data_source.dart';
 import '../../home/data/repositories/home_repository_impl.dart';
 import '../../home/domain/repositories/home_repository.dart';
 import '../../home/domain/usecases/get_home_data_usecase.dart';
+import '../../home/domain/usecases/sync_todos_usecase.dart';
+import '../../home/domain/usecases/update_todo_usecase.dart';
 import '../../home/presentation/home/controller/home_controller.dart';
 
 class DashboardBinding extends Bindings {
@@ -13,15 +15,14 @@ class DashboardBinding extends Bindings {
   void dependencies() {
     Get.lazyPut(() => BottomNavController());
 
-    // Home Dependencies (needed for HomeScreen inside Dashboard)
-    Get.lazyPut<HomeRemoteDataSource>(
-      () =>
-          HomeRemoteDataSourceImpl(client: Get.find<ApiClient>(tag: 'public')),
-    );
-    Get.lazyPut<HomeRepository>(
-      () => HomeRepositoryImpl(remoteDataSource: Get.find()),
-    );
+    // Home Dependencies
     Get.lazyPut(() => GetHomeDataUseCase(Get.find()));
-    Get.lazyPut(() => HomeController(getHomeDataUseCase: Get.find()));
+    Get.lazyPut(() => UpdateTodoUseCase(Get.find()));
+    Get.lazyPut(
+      () => HomeController(
+        getHomeDataUseCase: Get.find(),
+        updateTodoUseCase: Get.find(),
+      ),
+    );
   }
 }
