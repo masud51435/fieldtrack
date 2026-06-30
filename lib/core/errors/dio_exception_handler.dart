@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+
 import 'failures.dart';
 
 class DioExceptionHandler {
@@ -12,7 +13,13 @@ class DioExceptionHandler {
     bool hasErrorKey = false;
 
     if (data is Map<String, dynamic>) {
-      serverMessage = data['message'] ?? data['error'];
+      final errorData = data['error'];
+      if (errorData is Map<String, dynamic>) {
+        serverMessage = errorData['message'] ?? errorData['code'];
+      } else {
+        serverMessage = data['message'] ?? errorData;
+      }
+
       metaData = data['errors'] ?? data['data'];
       hasErrorKey = data.containsKey('message') || data.containsKey('error');
     }
