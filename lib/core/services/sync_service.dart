@@ -12,6 +12,7 @@ class SyncService extends GetxService {
   final SyncTodosUseCase syncTodosUseCase;
   final UpdateTodoUseCase updateTodoUseCase;
   late Box _syncBox;
+  late Box _metaBox;
   final _connectivity = Connectivity();
   StreamSubscription? _connectivitySubscription;
 
@@ -27,10 +28,11 @@ class SyncService extends GetxService {
 
   Future<SyncService> init() async {
     _syncBox = await Hive.openBox('pending_sync');
+    _metaBox = await Hive.openBox('sync_metadata');
     _updatePendingList();
 
-    // Load last sync time from box
-    final storedTime = _syncBox.get('last_sync_timestamp');
+    // Load last sync time from metadata box
+    final storedTime = _metaBox.get('last_sync_timestamp');
     if (storedTime != null) {
       lastSyncTime.value = DateTime.parse(storedTime);
     }
@@ -57,7 +59,10 @@ class SyncService extends GetxService {
 
   void _updatePendingList() {
     pendingChanges.assignAll(
-      _syncBox.values.map((e) => Map<String, dynamic>.from(e)).toList(),
+      _syncBox.values
+          .whereType<Map>()
+          .map((e) => Map<String, dynamic>.from(e))
+          .toList(),
     );
   }
 
@@ -130,7 +135,7 @@ class SyncService extends GetxService {
     if (connectivityResult.contains(ConnectivityResult.none)) return;
 
     try {
-      final changes = _syncBox.values.map((e) {
+      final changes = _syncBox.values.whereType<Map>().map((e) {
         final map = Map<String, dynamic>.from(e);
         return {
           'todo_id': map['todo_id'],
@@ -152,7 +157,7 @@ class SyncService extends GetxService {
   void _updateLastSyncTime() {
     final now = DateTime.now();
     lastSyncTime.value = now;
-    _syncBox.put('last_sync_timestamp', now.toIso8601String());
+    _metaBox.put('last_sync_timestamp', now.toIso8601String());
   }
 
   int get pendingCount => pendingChanges.length;

@@ -1,11 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
-import '../../../../../core/services/sync_service.dart';
-import '../../../../../core/usecases/usecase.dart';
-import '../../../domain/entities/home_entity.dart';
-import '../../../domain/usecases/get_home_data_usecase.dart';
-import '../../../domain/usecases/update_todo_usecase.dart';
+import '../../../../core/services/sync_service.dart';
+import '../../../../core/usecases/usecase.dart';
+import '../../domain/entities/home_entity.dart';
+import '../../domain/usecases/get_home_data_usecase.dart';
+import '../../domain/usecases/update_todo_usecase.dart';
 
 class HomeController extends GetxController {
   final GetHomeDataUseCase getHomeDataUseCase;

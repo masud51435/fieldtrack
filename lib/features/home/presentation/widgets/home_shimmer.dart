@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../../core/widgets/app_shimmer.dart';
+import '../../../../core/widgets/app_shimmer.dart';
 
 class HomeShimmer extends StatelessWidget {
   const HomeShimmer({super.key});
