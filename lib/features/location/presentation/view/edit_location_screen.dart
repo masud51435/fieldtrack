@@ -20,8 +20,9 @@ class EditLocationScreen extends GetView<EditLocationController> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        leadingWidth: 60.w,
         leading: Padding(
-          padding: EdgeInsets.all(8.r),
+          padding: EdgeInsets.only(left: 24.w, top: 8.r, bottom: 8.r),
           child: Container(
             decoration: BoxDecoration(
               color: isDark ? AppColors.surfaceDark : Colors.white,
@@ -290,7 +291,7 @@ class EditLocationScreen extends GetView<EditLocationController> {
                 child: OutlinedButton(
                   onPressed: () => controller.deleteLocation(),
                   style: OutlinedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 16.h),
+                    padding: EdgeInsets.symmetric(vertical: 14.h),
                     side: BorderSide(color: Colors.red.withValues(alpha: 0.5)),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12.r),

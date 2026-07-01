@@ -19,8 +19,9 @@ class AddLocationScreen extends GetView<AddLocationController> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        leadingWidth: 60.w,
         leading: Padding(
-          padding: EdgeInsets.all(8.r),
+          padding: EdgeInsets.only(left: 24.w, top: 8.r, bottom: 8.r),
           child: Container(
             decoration: BoxDecoration(
               color: isDark ? AppColors.surfaceDark : Colors.white,

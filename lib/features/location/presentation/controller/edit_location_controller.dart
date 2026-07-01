@@ -119,7 +119,6 @@ class EditLocationController extends GetxController {
       ToastService.showSuccess("Location updated successfully");
     } catch (e) {
       debugPrint("Error updating location: $e");
-      ToastService.showError("Failed to update location.");
     } finally {
       isLoading.value = false;
     }
@@ -157,7 +156,6 @@ class EditLocationController extends GetxController {
       ToastService.showSuccess("Location deleted successfully");
     } catch (e) {
       debugPrint("Error deleting location: $e");
-      ToastService.showError("Failed to delete location.");
     } finally {
       isDeleting.value = false;
     }
