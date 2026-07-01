@@ -1,11 +1,12 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:get/get.dart';
 
-class NotificationService {
-  static final FlutterLocalNotificationsPlugin _notificationsPlugin =
+class NotificationService extends GetxService {
+  final FlutterLocalNotificationsPlugin _notificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
   /// Initialize notification service with platform-specific settings
-  static Future<void> init() async {
+  Future<NotificationService> init() async {
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
 
@@ -22,11 +23,21 @@ class NotificationService {
           iOS: initializationSettingsIOS,
         );
 
-    await _notificationsPlugin.initialize(settings: initializationSettings);
+    await _notificationsPlugin.initialize(
+      settings: initializationSettings,
+      onDidReceiveNotificationResponse: _onNotificationTapped,
+    );
+
+    return this;
+  }
+
+  /// Callback when a notification is tapped
+  void _onNotificationTapped(NotificationResponse details) {
+    // Implement navigation logic here if needed
   }
 
   /// Show a simple local notification
-  static Future<void> showNotification({
+  Future<void> showNotification({
     required int id,
     required String title,
     required String body,
