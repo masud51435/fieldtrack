@@ -69,10 +69,4 @@ class AuthRepositoryImpl implements AuthRepository {
     await remoteDataSource.logout();
     await authPersistData.deleteAuthData();
   }
-
-  // get current user method
-  @override
-  Future<Map<String, dynamic>> getCurrentUser() async {
-    return await remoteDataSource.getCurrentUser();
-  }
 }

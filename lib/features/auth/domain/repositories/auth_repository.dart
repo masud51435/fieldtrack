@@ -10,6 +10,4 @@ abstract class AuthRepository {
   });
 
   Future<void> logout();
-
-  Future<Map<String, dynamic>> getCurrentUser();
 }

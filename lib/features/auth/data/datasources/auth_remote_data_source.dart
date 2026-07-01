@@ -10,18 +10,21 @@ abstract class AuthRemoteDataSource {
   Future<LoginResponseModel> register(Map<String, dynamic> data);
   Future<AuthData> refreshToken(String refreshToken);
   Future<void> logout();
-  Future<Map<String, dynamic>> getCurrentUser();
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
-  final ApiClient client;
+  final ApiClient publicClient;
+  final ApiClient secureClient;
 
-  AuthRemoteDataSourceImpl({required this.client});
+  AuthRemoteDataSourceImpl({
+    required this.publicClient,
+    required this.secureClient,
+  });
 
   // login method
   @override
   Future<LoginResponseModel> login(LoginRequestModel request) async {
-    return await client.request(
+    return await publicClient.request(
       path: AuthApiConstants.login,
       method: MethodType.post,
       payload: request.toJson(),
@@ -32,7 +35,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   // register method
   @override
   Future<LoginResponseModel> register(Map<String, dynamic> data) async {
-    return await client.request(
+    return await publicClient.request(
       path: AuthApiConstants.register,
       method: MethodType.post,
       payload: data,
@@ -43,7 +46,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   // refresh token method
   @override
   Future<AuthData> refreshToken(String refreshToken) async {
-    return await client.request(
+    return await publicClient.request(
       path: AuthApiConstants.refresh,
       method: MethodType.post,
       payload: {'refresh_token': refreshToken},
@@ -54,18 +57,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   // logout method
   @override
   Future<void> logout() async {
-    await client.request(
+    await secureClient.request(
       path: AuthApiConstants.logout,
       method: MethodType.post,
-    );
-  }
-
-  // get current user method
-  @override
-  Future<Map<String, dynamic>> getCurrentUser() async {
-    return await client.request(
-      path: AuthApiConstants.me,
-      method: MethodType.get,
     );
   }
 }
