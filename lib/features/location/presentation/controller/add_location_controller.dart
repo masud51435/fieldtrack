@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/services/geofence_service.dart';
 import '../../../../core/utils/snackbar/toast_service.dart';
 import '../../data/models/add_new_location_request_model.dart';
 import '../../domain/usecases/add_new_location_usecases.dart';
@@ -14,9 +16,9 @@ class AddLocationController extends GetxController {
   final latController = TextEditingController();
   final lngController = TextEditingController();
 
-  var radius = 150.0.obs;
-  var isActive = true.obs;
-  var isLoading = false.obs;
+  final radius = 150.0.obs;
+  final isActive = true.obs;
+  final isLoading = false.obs;
 
   final formKey = GlobalKey<FormState>();
 
@@ -28,23 +30,38 @@ class AddLocationController extends GetxController {
     super.onClose();
   }
 
-  void updateRadius(double value) {
-    radius.value = value;
-  }
+  void updateRadius(double value) => radius.value = value;
 
-  void toggleActive(bool value) {
-    isActive.value = value;
-  }
+  void toggleActive(bool value) => isActive.value = value;
 
   Future<void> getCurrentLocation() async {
-    // This will be implemented once geolocator is added
-    // For now, setting some dummy values or showing a toast
-    ToastService.showSuccess("Fetching current location...");
+    try {
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) return;
+      }
 
-    // Simulating location fetch
-    await Future.delayed(const Duration(seconds: 1));
-    latController.text = "25.2048";
-    lngController.text = "55.2708";
+      if (permission == LocationPermission.deniedForever) {
+        ToastService.showError(
+          "Location permissions are permanently denied. Please enable them in settings.",
+        );
+        return;
+      }
+
+      ToastService.showSuccess("Fetching current location...");
+
+      final Position position = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
+      );
+
+      latController.text = position.latitude.toStringAsFixed(6);
+      lngController.text = position.longitude.toStringAsFixed(6);
+    } catch (e) {
+      ToastService.showError("Could not fetch location: $e");
+    }
   }
 
   Future<void> saveLocation() async {
@@ -61,11 +78,17 @@ class AddLocationController extends GetxController {
       );
 
       await addNewLocationUseCase(request);
+
+      // Refresh Geofence monitoring if active
+      if (Get.isRegistered<GeofenceService>()) {
+        await Get.find<GeofenceService>().updateMonitoredLocations();
+      }
+
       Get.back(result: true);
       ToastService.showSuccess("Location saved successfully");
     } catch (e) {
       debugPrint("Error saving location: $e");
-      // Error handling is usually done in interceptor/handler
+      ToastService.showError("Failed to save location. Please try again.");
     } finally {
       isLoading.value = false;
     }

@@ -3,8 +3,11 @@ import 'package:get/get.dart';
 import '../../core/network/api_client.dart';
 import '../../core/network/dio_client.dart';
 import '../../core/network/links.dart';
+import '../../core/services/geofence_service.dart';
 import '../../core/services/sync_service.dart';
+import '../../core/services/theme_service.dart';
 import '../../core/storage/auth_persist_data.dart';
+import '../../core/storage/local_storage.dart';
 import '../../features/auth/data/datasources/auth_remote_data_source.dart';
 import '../../features/auth/data/repositories/auth_repository_impl.dart';
 import '../../features/auth/domain/repositories/auth_repository.dart';
@@ -13,9 +16,10 @@ import '../../features/home/data/repositories/home_repository_impl.dart';
 import '../../features/home/domain/repositories/home_repository.dart';
 import '../../features/home/domain/usecases/sync_todos_usecase.dart';
 import '../../features/home/domain/usecases/update_todo_usecase.dart';
-
-import '../../core/services/theme_service.dart';
-import '../../core/storage/local_storage.dart';
+import '../../features/location/data/datasources/location_remote_data_source.dart';
+import '../../features/location/data/repository/location_repository_impl.dart';
+import '../../features/location/domain/repositories/location_repository.dart';
+import '../../features/location/domain/usecases/get_all_location_usecases.dart';
 
 class InitialBindings extends Bindings {
   @override
@@ -98,6 +102,22 @@ class InitialBindings extends Bindings {
         syncTodosUseCase: Get.find(),
         updateTodoUseCase: Get.find(),
       ).init(),
+      permanent: true,
+    );
+
+    // 5. Location & Geofence Dependencies
+    Get.lazyPut<LocationRemoteDataSource>(
+      () => LocationRemoteDataSourceImpl(client: Get.find(tag: 'secure')),
+      fenix: true,
+    );
+    Get.lazyPut<LocationRepository>(
+      () => LocationRepositoryImpl(remoteDataSource: Get.find()),
+      fenix: true,
+    );
+    Get.lazyPut(() => GetAllLocationUseCases(Get.find()), fenix: true);
+
+    Get.putAsync(
+      () => GeofenceService(getAllLocationUseCases: Get.find()).init(),
       permanent: true,
     );
   }

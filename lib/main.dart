@@ -6,14 +6,18 @@ import 'app/bindings/initial_bindings.dart';
 import 'app/routes/routes.dart';
 import 'app/routes/routes_handler.dart';
 import 'app/theme/app_theme.dart';
+import 'core/services/notification_service.dart';
 import 'core/storage/local_storage.dart';
 import 'init_dependencies.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize global dependencies (SharedPreferences, Firebase, etc.)
+  // Initialize global dependencies
   await initDependencies();
+  
+  // Initialize notifications
+  await NotificationService.init();
 
   runApp(const MyApp());
 }
