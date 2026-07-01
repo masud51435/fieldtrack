@@ -6,6 +6,7 @@ import 'app/bindings/initial_bindings.dart';
 import 'app/routes/routes.dart';
 import 'app/routes/routes_handler.dart';
 import 'app/theme/app_theme.dart';
+import 'core/storage/local_storage.dart';
 import 'init_dependencies.dart';
 
 void main() async {
@@ -22,8 +23,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final storage = Get.find<LocalStorage>();
+    final isDarkMode = storage.read('isDarkMode') == 'true';
+
     return ScreenUtilInit(
-      designSize: const Size(375, 812), // Standard iPhone design size
+      designSize: const Size(375, 812),
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (_, child) {
@@ -41,7 +45,7 @@ class MyApp extends StatelessWidget {
           // Theme
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
-          themeMode: ThemeMode.system,
+          themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
         );
       },
     );
