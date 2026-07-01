@@ -6,6 +6,11 @@ import '../models/all_locations_response_model.dart';
 abstract class LocationRemoteDataSource {
   Future<AllLocationsResponseModel> getAllLocations();
   Future<Location> addNewLocation(AddNewLocationRequestModel request);
+  Future<Location> updateLocation(
+    String id,
+    AddNewLocationRequestModel request,
+  );
+  Future<void> deleteLocation(String id);
 }
 
 class LocationRemoteDataSourceImpl implements LocationRemoteDataSource {
@@ -29,5 +34,23 @@ class LocationRemoteDataSourceImpl implements LocationRemoteDataSource {
       payload: request.toJson(),
       parse: (json) => Location.fromJson(json),
     );
+  }
+
+  @override
+  Future<Location> updateLocation(
+    String id,
+    AddNewLocationRequestModel request,
+  ) async {
+    return await client.request(
+      path: "/locations/$id",
+      method: MethodType.put,
+      payload: request.toJson(),
+      parse: (json) => Location.fromJson(json),
+    );
+  }
+
+  @override
+  Future<void> deleteLocation(String id) async {
+    await client.request(path: "/locations/$id", method: MethodType.delete);
   }
 }

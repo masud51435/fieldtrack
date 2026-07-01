@@ -6,4 +6,5 @@ class BaseRoute {
   static const String homeScreen = "/homeScreen";
   static const String profileScreen = "/profileScreen";
   static const String addLocation = "/addLocation";
+  static const String editLocation = "/editLocation";
 }

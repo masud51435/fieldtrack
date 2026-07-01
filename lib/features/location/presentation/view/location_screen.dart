@@ -55,7 +55,7 @@ class LocationScreen extends GetView<LocationController> {
               child: Container(
                 decoration: BoxDecoration(
                   color: isDark ? AppColors.surfaceDark : Colors.white,
-                  borderRadius: BorderRadius.circular(16.r),
+                  borderRadius: BorderRadius.circular(20.r),
                   boxShadow: [
                     if (!isDark)
                       BoxShadow(
@@ -137,7 +137,10 @@ class LocationScreen extends GetView<LocationController> {
                     itemCount: controller.filteredLocations.length,
                     itemBuilder: (context, index) {
                       final location = controller.filteredLocations[index];
-                      return LocationCard(location: location);
+                      return LocationCard(
+                        location: location,
+                        onTap: () => controller.goToEditLocation(location),
+                      );
                     },
                   );
                 }),

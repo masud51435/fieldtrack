@@ -7,6 +7,7 @@ import 'package:get/get_navigation/src/routes/transitions_type.dart';
 import '../../features/auth/presentation/sign_up/bindings/signup_binding.dart';
 import '../../features/dashboard/binding/dashboard_binding.dart';
 import '../../features/location/presentation/bindings/add_location_binding.dart';
+import '../../features/location/presentation/bindings/edit_location_binding.dart';
 
 List<GetPage> routesHandler = [
   GetPage(
@@ -36,6 +37,12 @@ List<GetPage> routesHandler = [
     name: BaseRoute.addLocation,
     page: () => RoutesConfig.addLocation,
     binding: AddLocationBinding(),
+    transition: Transition.rightToLeft,
+  ),
+  GetPage(
+    name: BaseRoute.editLocation,
+    page: () => RoutesConfig.editLocation,
+    binding: EditLocationBinding(),
     transition: Transition.rightToLeft,
   ),
 ];

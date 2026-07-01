@@ -21,4 +21,18 @@ class LocationRepositoryImpl implements LocationRepository {
     final response = await remoteDataSource.addNewLocation(request);
     return response.toEntity();
   }
+
+  @override
+  Future<LocationEntity> updateLocation(
+    String id,
+    AddNewLocationRequestModel request,
+  ) async {
+    final response = await remoteDataSource.updateLocation(id, request);
+    return response.toEntity();
+  }
+
+  @override
+  Future<void> deleteLocation(String id) async {
+    await remoteDataSource.deleteLocation(id);
+  }
 }

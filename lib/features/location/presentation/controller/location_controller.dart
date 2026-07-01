@@ -68,4 +68,11 @@ class LocationController extends GetxController {
       refreshLocations();
     }
   }
+
+  void goToEditLocation(LocationEntity location) async {
+    final result = await Get.toNamed(BaseRoute.editLocation, arguments: location);
+    if (result == true) {
+      refreshLocations();
+    }
+  }
 }
