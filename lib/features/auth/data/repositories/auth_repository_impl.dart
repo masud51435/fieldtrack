@@ -1,3 +1,6 @@
+import 'package:get/get.dart';
+
+import '../../../../core/services/geofence_service.dart';
 import '../../../../core/storage/auth_data.dart';
 import '../../../../core/storage/auth_persist_data.dart';
 import '../../domain/entities/user_entity.dart';
@@ -66,6 +69,11 @@ class AuthRepositoryImpl implements AuthRepository {
   // refresh token method
   @override
   Future<void> logout() async {
+    // Stop background monitoring before clearing auth
+    if (Get.isRegistered<GeofenceService>()) {
+      Get.find<GeofenceService>().stopMonitoring();
+    }
+
     await remoteDataSource.logout();
     await authPersistData.deleteAuthData();
   }

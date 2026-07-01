@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:fieldtrack/core/storage/auth_persist_data.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:hive_ce/hive.dart';
@@ -130,6 +131,10 @@ class SyncService extends GetxService {
   /// Bulk sync for everything in the queue (POST /api/v1/todos/sync)
   Future<void> syncNow() async {
     if (_syncBox.isEmpty) return;
+
+    // Check Auth: Don't sync if logged out
+    final authData = await Get.find<AuthPersistData>().getAuthData();
+    if (authData.accessToken.isEmpty) return;
 
     final connectivityResult = await _connectivity.checkConnectivity();
     if (connectivityResult.contains(ConnectivityResult.none)) return;

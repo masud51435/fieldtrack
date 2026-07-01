@@ -4,6 +4,7 @@ import '../../core/network/api_client.dart';
 import '../../core/network/dio_client.dart';
 import '../../core/network/links.dart';
 import '../../core/services/geofence_service.dart';
+import '../../core/services/notification_service.dart';
 import '../../core/services/sync_service.dart';
 import '../../core/services/theme_service.dart';
 import '../../core/storage/auth_persist_data.dart';
@@ -27,6 +28,8 @@ class InitialBindings extends Bindings {
     // 1. Core Services
     Get.lazyPut(() => ThemeService(Get.find<LocalStorage>()), fenix: true);
     Get.lazyPut(() => AuthPersistData(), fenix: true);
+
+    Get.putAsync(() => NotificationService().init(), permanent: true);
 
     // 2. Api Clients
     Get.lazyPut<ApiClient>(

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../../app/routes/routes.dart';
+import '../../../../../core/services/geofence_service.dart';
+import '../../../../../core/services/sync_service.dart';
 import '../../../../../core/utils/device/device_utility.dart';
 import '../../../domain/usecases/login_usecase.dart';
 
@@ -46,6 +48,14 @@ class LoginController extends GetxController {
           password: passwordController.text,
         ),
       );
+
+      // Initialize background services after login
+      if (Get.isRegistered<GeofenceService>()) {
+        Get.find<GeofenceService>().updateMonitoredLocations();
+      }
+      if (Get.isRegistered<SyncService>()) {
+        Get.find<SyncService>().syncNow();
+      }
 
       // Navigate to Dashboard
       Get.offAllNamed(BaseRoute.dashboard);

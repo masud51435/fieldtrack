@@ -6,7 +6,6 @@ import 'app/bindings/initial_bindings.dart';
 import 'app/routes/routes.dart';
 import 'app/routes/routes_handler.dart';
 import 'app/theme/app_theme.dart';
-import 'core/services/notification_service.dart';
 import 'core/storage/local_storage.dart';
 import 'init_dependencies.dart';
 
@@ -15,9 +14,6 @@ void main() async {
 
   // Initialize global dependencies
   await initDependencies();
-  
-  // Initialize notifications
-  await NotificationService.init();
 
   runApp(const MyApp());
 }
