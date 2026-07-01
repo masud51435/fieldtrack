@@ -14,10 +14,14 @@ import '../../features/home/domain/repositories/home_repository.dart';
 import '../../features/home/domain/usecases/sync_todos_usecase.dart';
 import '../../features/home/domain/usecases/update_todo_usecase.dart';
 
+import '../../core/services/theme_service.dart';
+import '../../core/storage/local_storage.dart';
+
 class InitialBindings extends Bindings {
   @override
   void dependencies() {
     // 1. Core Services
+    Get.lazyPut(() => ThemeService(Get.find<LocalStorage>()), fenix: true);
     Get.lazyPut(() => AuthPersistData(), fenix: true);
 
     // 2. Api Clients
@@ -62,8 +66,10 @@ class InitialBindings extends Bindings {
 
     // 3. Shared Auth Dependencies
     Get.lazyPut<AuthRemoteDataSource>(
-      () =>
-          AuthRemoteDataSourceImpl(client: Get.find<ApiClient>(tag: 'public')),
+      () => AuthRemoteDataSourceImpl(
+        publicClient: Get.find<ApiClient>(tag: 'public'),
+        secureClient: Get.find<ApiClient>(tag: 'secure'),
+      ),
       fenix: true,
     );
     Get.lazyPut<AuthRepository>(
