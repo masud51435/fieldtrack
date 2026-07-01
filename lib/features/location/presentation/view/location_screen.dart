@@ -34,13 +34,16 @@ class LocationScreen extends GetView<LocationController> {
                       color: isDark ? Colors.white : AppColors.textPrimaryLight,
                     ),
                   ),
-                  Container(
-                    padding: EdgeInsets.all(8.r),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary,
-                      borderRadius: BorderRadius.circular(10.r),
+                  GestureDetector(
+                    onTap: controller.goToAddLocation,
+                    child: Container(
+                      padding: EdgeInsets.all(8.r),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary,
+                        borderRadius: BorderRadius.circular(10.r),
+                      ),
+                      child: Icon(Icons.add, color: Colors.white, size: 20.sp),
                     ),
-                    child: Icon(Icons.add, color: Colors.white, size: 20.sp),
                   ),
                 ],
               ),
@@ -146,7 +149,7 @@ class LocationScreen extends GetView<LocationController> {
       floatingActionButton: Padding(
         padding: EdgeInsets.only(bottom: 10.h),
         child: FloatingActionButton(
-          onPressed: () {},
+          onPressed: controller.goToAddLocation,
           backgroundColor: AppColors.primary,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.r),

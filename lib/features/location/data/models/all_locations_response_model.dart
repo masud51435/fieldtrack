@@ -72,4 +72,13 @@ class Location {
     "is_active": isActive,
     "id": id,
   };
+
+  LocationEntity toEntity() => LocationEntity(
+    locationName: locationName ?? "",
+    latitude: latitude ?? 0.0,
+    longitude: longitude ?? 0.0,
+    radiusM: radiusM ?? 0.0,
+    isActive: isActive ?? false,
+    id: id ?? "",
+  );
 }

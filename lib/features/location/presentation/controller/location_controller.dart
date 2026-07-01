@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../app/routes/routes.dart';
 import '../../../../core/usecases/usecase.dart';
 import '../../domain/entities/location_entity.dart';
 import '../../domain/usecases/get_all_location_usecases.dart';
@@ -59,5 +60,12 @@ class LocationController extends GetxController {
 
   Future<void> refreshLocations() async {
     await fetchLocations();
+  }
+
+  void goToAddLocation() async {
+    final result = await Get.toNamed(BaseRoute.addLocation);
+    if (result == true) {
+      refreshLocations();
+    }
   }
 }
