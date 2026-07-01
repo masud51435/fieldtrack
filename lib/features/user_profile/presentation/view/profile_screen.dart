@@ -182,7 +182,7 @@ class ProfileScreen extends GetView<ProfileController> {
                   child: OutlinedButton(
                     onPressed: controller.logout,
                     style: OutlinedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(vertical: 16.h),
+                      padding: EdgeInsets.symmetric(vertical: 14.h),
                       side: BorderSide(
                         color: AppColors.error.withValues(alpha: 0.5),
                       ),
