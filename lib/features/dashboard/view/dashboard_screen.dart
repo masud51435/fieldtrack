@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../../custom_bottom_navbar/controller/bottom_navbar_controller.dart';
 import '../../custom_bottom_navbar/view/custom_bottom_navbar.dart';
 import '../../home/presentation/view/home_screen.dart';
+import '../../location/presentation/view/location_screen.dart';
 import '../../sync/view/sync_screen.dart';
 import '../../user_profile/presentation/view/profile_screen.dart';
 
@@ -14,7 +15,7 @@ class DashboardScreen extends GetView<BottomNavController> {
   Widget build(BuildContext context) {
     final pages = [
       const HomeScreen(),
-      const Center(child: Text("Locations")),
+      const LocationScreen(),
       const SyncScreen(),
       const ProfileScreen(),
     ];

@@ -5,6 +5,11 @@ import '../../custom_bottom_navbar/controller/bottom_navbar_controller.dart';
 import '../../home/domain/usecases/get_home_data_usecase.dart';
 import '../../home/domain/usecases/update_todo_usecase.dart';
 import '../../home/presentation/controller/home_controller.dart';
+import '../../location/data/datasources/location_remote_data_source.dart';
+import '../../location/data/repository/location_repository_impl.dart';
+import '../../location/domain/repositories/location_repository.dart';
+import '../../location/domain/usecases/get_all_location_usecases.dart';
+import '../../location/presentation/controller/location_controller.dart';
 import '../../user_profile/data/datasources/profile_remote_data_source.dart';
 import '../../user_profile/data/repositories/profile_repository_impl.dart';
 import '../../user_profile/domain/repositories/profile_repository.dart';
@@ -43,5 +48,17 @@ class DashboardBinding extends Bindings {
         logoutUseCase: Get.find(),
       ),
     );
+
+    // location dependencies
+    Get.lazyPut<LocationRemoteDataSource>(
+      () => LocationRemoteDataSourceImpl(client: Get.find(tag: "secure")),
+    );
+
+    Get.lazyPut<LocationRepository>(
+      () => LocationRepositoryImpl(remoteDataSource: Get.find()),
+    );
+
+    Get.lazyPut(() => GetAllLocationUseCases(Get.find()));
+    Get.lazyPut(() => LocationController(getAllLocationUseCases: Get.find()));
   }
 }

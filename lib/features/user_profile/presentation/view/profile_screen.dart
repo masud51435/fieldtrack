@@ -7,6 +7,7 @@ import '../../../../core/services/theme_service.dart';
 import '../controllers/profile_controller.dart';
 import '../widgets/profile_header.dart';
 import '../widgets/profile_menu_item.dart';
+import '../widgets/profile_shimmer.dart';
 import '../widgets/profile_stat_card.dart';
 
 class ProfileScreen extends GetView<ProfileController> {
@@ -21,7 +22,7 @@ class ProfileScreen extends GetView<ProfileController> {
       body: SafeArea(
         child: Obx(() {
           if (controller.isLoading.value && controller.profile.value == null) {
-            return const Center(child: CircularProgressIndicator());
+            return const ProfileShimmer();
           }
 
           final user = controller.profile.value;
