@@ -42,7 +42,7 @@ class HomeShimmer extends StatelessWidget {
             ListView.builder(
               shrinkWrap: true,
               itemCount: 5,
-              itemBuilder: (_, __) => Padding(
+              itemBuilder: (_, _) => Padding(
                 padding: EdgeInsets.only(bottom: 16.h),
                 child: const ShimmerBox(height: 120, borderRadius: 20),
               ),

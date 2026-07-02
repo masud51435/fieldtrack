@@ -1,7 +1,7 @@
 name: fieldtrack
 description: "A new Flutter project."
 
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: 'none'
 
 version: 1.0.0+1
 
@@ -46,39 +46,3 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
-  assets:
-    - assets/logo/
-    - assets/images/png/demo/
-    - assets/images/png/home/
-    - assets/images/png/onboarding/
-    - assets/images/png/verify_id/
-    - assets/images/png/payment_option/
-    - assets/images/png/success/
-    - assets/images/png/support/
-    - assets/images/svg/splash/
-    - assets/images/svg/empty/
-    - assets/icon/home/
-    - assets/icon/menu/
-    - assets/icon/profile/
-    - assets/icon/bottom_navbar/
-    - assets/icon/support/
-    - assets/icon/common/
-    - assets/others/
-
-  fonts:
-    - family: Outfit
-      fonts:
-        - asset: assets/fonts/Outfit-Light.ttf
-          weight: 300
-        - asset: assets/fonts/Outfit-Regular.ttf
-          weight: 400
-        - asset: assets/fonts/Outfit-Medium.ttf
-          weight: 500
-        - asset: assets/fonts/Outfit-SemiBold.ttf
-          weight: 600
-        - asset: assets/fonts/Outfit-Bold.ttf
-          weight: 700
-        - asset: assets/fonts/Outfit-ExtraBold.ttf
-          weight: 800
-        - asset: assets/fonts/Outfit-Black.ttf
-          weight: 900

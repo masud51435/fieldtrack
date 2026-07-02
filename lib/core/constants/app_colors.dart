@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   // Primary colors
-  static const Color primary = Color(0xFF109D8B); // Teal color from Sign In button
-  static const Color primaryDark = Color(0xFF44F1A6); // Brighter green for dark mode
+  static const Color primary = Color(0xFF109D8B);
+  static const Color primaryDark = Color(0xFF44F1A6);
 
   // Neutral colors - Light Mode
   static const Color bgLight = Color(0xFFF8F9FA);

@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get/get.dart';
 import 'core/storage/local_storage.dart';
 
-/// Initialize global dependencies here (e.g., SharedPreferences, Dio, etc.)
+/// Initialize global dependencies
 Future<void> initDependencies() async {
   await Hive.initFlutter();
   
