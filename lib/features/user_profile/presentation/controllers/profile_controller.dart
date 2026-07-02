@@ -19,6 +19,7 @@ class ProfileController extends GetxController {
 
   final profile = Rxn<ProfileEntity>();
   final isLoading = false.obs;
+  final isLoggingOut = false.obs;
 
   @override
   void onInit() {
@@ -56,11 +57,14 @@ class ProfileController extends GetxController {
 
   // Logout method
   Future<void> logout() async {
+    isLoggingOut.value = true;
     try {
       await logoutUseCase(NoParams());
       Get.offAllNamed(BaseRoute.login);
     } catch (e) {
       // Errors are handled by ApiErrorHandler + ToastService automatically
+    } finally {
+      isLoggingOut.value = false;
     }
   }
 }
