@@ -158,11 +158,22 @@ class SyncService extends GetxService {
         };
       }).toList();
 
-      await syncTodosUseCase(changes);
-      await _syncBox.clear();
+      final result = await syncTodosUseCase(changes);
+
+      final failedItems = result['failed'] as List? ?? [];
+      final syncedIds = result['synced_ids'] as List? ?? [];
+
+      if (failedItems.isNotEmpty) {
+        debugPrint("Bulk sync completed with ${failedItems.length} conflicts.");
+        // If there are conflicts, we clear the queue and refresh to stay in sync with server
+        await _syncBox.clear();
+      } else {
+        await _syncBox.clear();
+        debugPrint("Bulk sync successful: ${syncedIds.length} items");
+      }
+
       _updatePendingList();
       _updateLastSyncTime();
-      debugPrint("Bulk sync successful: ${changes.length} items");
     } catch (e) {
       if (e is ConflictFailure) {
         debugPrint("Bulk sync conflict! Clearing queue to prevent loop.");

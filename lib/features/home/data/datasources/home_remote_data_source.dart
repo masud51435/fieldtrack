@@ -5,7 +5,7 @@ import '../models/home_response_model.dart';
 abstract class HomeRemoteDataSource {
   Future<HomeResponseModel> getHomeData();
   Future<Todo> updateTodo(String id, bool isCompleted, String updatedAt);
-  Future<void> syncTodos(List<Map<String, dynamic>> changes);
+  Future<Map<String, dynamic>> syncTodos(List<Map<String, dynamic>> changes);
 }
 
 class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
@@ -36,12 +36,15 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
   }
 
   @override
-  Future<void> syncTodos(List<Map<String, dynamic>> changes) async {
-    await client.request(
+  Future<Map<String, dynamic>> syncTodos(
+    List<Map<String, dynamic>> changes,
+  ) async {
+    final response = await client.request(
       path: "/todos/sync",
       method: MethodType.post,
       payload: {'changes': changes},
       parse: (json) => json,
     );
+    return response as Map<String, dynamic>;
   }
 }

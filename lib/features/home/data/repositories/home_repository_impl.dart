@@ -28,7 +28,9 @@ class HomeRepositoryImpl implements HomeRepository {
   }
 
   @override
-  Future<void> syncTodos(List<Map<String, dynamic>> changes) async {
-    await remoteDataSource.syncTodos(changes);
+  Future<Map<String, dynamic>> syncTodos(
+    List<Map<String, dynamic>> changes,
+  ) async {
+    return await remoteDataSource.syncTodos(changes);
   }
 }
