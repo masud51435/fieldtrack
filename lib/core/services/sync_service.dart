@@ -78,9 +78,9 @@ class SyncService extends GetxService {
     String todoId,
     bool isCompleted,
     String title,
+    String updatedAt,
   ) async {
     final connectivityResult = await _connectivity.checkConnectivity();
-    final updatedAt = DateTime.now().toUtc().toIso8601String();
 
     if (connectivityResult.contains(ConnectivityResult.none)) {
       // OFFLINE: Save to local storage for later sync

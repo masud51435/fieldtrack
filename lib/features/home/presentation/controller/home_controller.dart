@@ -33,10 +33,13 @@ class HomeController extends GetxController {
   void onInit() {
     super.onInit();
     loadHomeData();
+
+    // Automatically refresh data when a sync completes in the background
+    ever(_syncService.lastSyncTime, (_) => loadHomeData(silent: true));
   }
 
-  Future<void> loadHomeData() async {
-    isLoading.value = true;
+  Future<void> loadHomeData({bool silent = false}) async {
+    if (!silent) isLoading.value = true;
     try {
       final homeData = await getHomeDataUseCase(NoParams());
       allTodos.assignAll(homeData.todos);
@@ -53,6 +56,7 @@ class HomeController extends GetxController {
   Future<void> toggleTodo(TodoEntity todo) async {
     final oldStatus = todo.isCompleted;
     final newStatus = !oldStatus;
+    final updatedAt = DateTime.now().toUtc().toIso8601String();
 
     // 1. Optimistic UI Update
     final index = allTodos.indexWhere((t) => t.id == todo.id);
@@ -64,13 +68,13 @@ class HomeController extends GetxController {
         isCompleted: newStatus,
         dueAt: todo.dueAt,
         createdAt: todo.createdAt,
-        updatedAt: DateTime.now().toIso8601String(),
+        updatedAt: updatedAt,
       );
       _applyFilter();
     }
 
     // 2. Process update (Try PATCH if online, otherwise save to Queue)
-    await _syncService.processUpdate(todo.id, newStatus, todo.title);
+    await _syncService.processUpdate(todo.id, newStatus, todo.title, updatedAt);
 
     // Note: SyncService.addChange calls syncNow() internally,
     // which tries to hit the API if online.

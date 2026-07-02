@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 
@@ -19,53 +20,56 @@ class GeofenceService extends GetxService {
   final Set<String> _insideLocations = {};
 
   Future<GeofenceService> init() async {
-    await _checkPermissions();
-
-    // Only fetch if we are already logged in (app restart case)
     try {
       final authData = await Get.find<AuthPersistData>().getAuthData();
       if (authData.accessToken.isNotEmpty) {
         await updateMonitoredLocations();
-        _startMonitoring();
       }
-    } catch (_) {
-      // User is not logged in yet, which is fine during init.
-      // Geofencing will start automatically after a successful login.
-    }
+    } catch (_) {}
 
     return this;
   }
 
-  Future<void> _checkPermissions() async {
+  Future<bool> _checkPermissions() async {
     bool serviceEnabled;
     LocationPermission permission;
 
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) return;
+    if (!serviceEnabled) return false;
 
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) return;
+      if (permission == LocationPermission.denied) return false;
     }
 
-    if (permission == LocationPermission.deniedForever) return;
+    if (permission == LocationPermission.deniedForever) return false;
+
+    return true;
   }
 
   /// Public method to fetch locations and start monitoring (called after login)
   Future<void> updateMonitoredLocations() async {
+    // Check permissions right before we need them
+    final hasPermission = await _checkPermissions();
+    if (!hasPermission) {
+      debugPrint(
+        "GeofenceService: Permission denied, cannot start monitoring.",
+      );
+      return;
+    }
+
     try {
       final result = await getAllLocationUseCases(NoParams());
       monitoredLocations.assignAll(
         result.locations.where((l) => l.isActive).toList(),
       );
 
-      // If we have locations and stream isn't running, start it
-      if (monitoredLocations.isNotEmpty && _positionStream == null) {
+      if (monitoredLocations.isNotEmpty) {
         _startMonitoring();
       }
     } catch (e) {
-      // Error fetching locations
+      debugPrint("GeofenceService: Error fetching locations: $e");
     }
   }
 
@@ -80,8 +84,8 @@ class GeofenceService extends GetxService {
   void _startMonitoring() async {
     _positionStream?.cancel();
 
-    // Check initial position immediately
     try {
+      // Final check before hitting GPS
       final initialPosition = await Geolocator.getCurrentPosition(
         locationSettings: const LocationSettings(
           accuracy: LocationAccuracy.high,
@@ -89,7 +93,7 @@ class GeofenceService extends GetxService {
       );
       _evaluateGeofences(initialPosition);
     } catch (e) {
-      // Error getting initial position
+      debugPrint("GeofenceService: Error getting initial position: $e");
     }
 
     const LocationSettings locationSettings = LocationSettings(
