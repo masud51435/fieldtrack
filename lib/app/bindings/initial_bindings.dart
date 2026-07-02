@@ -1,3 +1,4 @@
+import 'package:fieldtrack/app/routes/routes.dart';
 import 'package:get/get.dart';
 
 import '../../core/network/api_client.dart';
@@ -63,6 +64,10 @@ class InitialBindings extends Bindings {
             await authPersistData.setAuthData(newAuthData);
             return true;
           } catch (e) {
+            if (Get.currentRoute != BaseRoute.login) {
+              Get.find<AuthRepository>().logout();
+              Get.offAllNamed(BaseRoute.login);
+            }
             return false;
           }
         },
