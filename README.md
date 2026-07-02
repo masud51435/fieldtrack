@@ -4,12 +4,23 @@ FieldTrack is a high-fidelity Flutter application built with **Clean Architectur
 
 ---
 
+## 🏗️ Architecture & Package Choices
+
+The project is built using **Clean Architecture** (Data, Domain, Presentation) to ensure high testability, scalability, and maintainability.
+
+*   **State Management & DI**: **GetX** was chosen for its high-performance reactive state management and lightweight dependency injection.
+*   **Networking**: **Dio** is used for robust HTTP requests, utilizing Interceptors for global token refreshing and connectivity pre-checks.
+*   **Local Storage**: **Hive** is used for the offline sync queue due to its speed and efficiency as a NoSQL database.
+*   **Location Services**: **Geolocator** provides reliable background position tracking.
+*   **Persistence**: **Flutter Secure Storage** protects sensitive authentication tokens.
+
+---
+
 ## 🚀 Getting Started
 
 ### Prerequisites
 *   Flutter SDK: `>=3.0.0`
 *   Dart SDK: `>=3.0.0`
-*   Android Studio / VS Code with Flutter extensions.
 
 ### Installation
 1.  **Clone the repository**:
@@ -17,12 +28,10 @@ FieldTrack is a high-fidelity Flutter application built with **Clean Architectur
     git clone https://github.com/masud51435/fieldtrack
     cd fieldtrack
     ```
-
 2.  **Install dependencies**:
     ```bash
     flutter pub get
     ```
-
 3.  **Run the app**:
     ```bash
     flutter run
@@ -32,58 +41,39 @@ FieldTrack is a high-fidelity Flutter application built with **Clean Architectur
 
 ## 📂 Folder Structure Overview
 
-The project follows a strict **Clean Architecture** pattern to ensure scalability and testability:
-
 ```text
 lib/
-├── app/                # Global app config (Routes, Theme, Bindings)
-├── core/               # Shared utilities, services, and base classes
-│   ├── network/        # Dio implementation & Interceptors
-│   ├── services/       # Global services (Sync, Geofence, Notifications)
-│   ├── storage/        # Local storage (Hive & Secure Storage)
-│   └── widgets/        # Reusable UI components
-└── features/           # Feature-based modules (Auth, Home, Location, Profile)
-    ├── data/           # Models, DataSources, Repositories Impl
+├── app/                # Routes, Theme, Global Bindings
+├── core/               # Network clients, Services, Storage, Failures
+└── features/           # Feature modules (Auth, Home, Location, Profile)
+    ├── data/           # Models, DataSources, Repositories
     ├── domain/         # Entities, Repository Interfaces, UseCases
-    └── presentation/   # GetX Controllers, Views, Bindings, Widgets
+    └── presentation/   # Controllers, Views, Widgets
 ```
 
 ---
 
 ## 🔄 Offline Sync Approach
 
-FieldTrack uses an **Offline-First** strategy for task management:
-
-1.  **Optimistic UI**: When a user toggles a task, the UI updates instantly.
-2.  **Sync Queue**: If the device is offline, changes are stored in a **Hive** box (`pending_sync`).
-3.  **Reactive Monitoring**: The `SyncService` listens to connectivity changes.
-4.  **Bulk Sync**: Once the device returns online, the app automatically triggers a `POST /todos/sync` request to batch-process all pending changes, ensuring data consistency without manual user intervention.
+1.  **Optimistic Updates**: UI updates immediately when a task is toggled.
+2.  **Queue Management**: Offline changes are stored in a Hive box (`pending_sync`).
+3.  **Connectivity Monitoring**: `SyncService` monitors network status via `connectivity_plus`.
+4.  **Automatic Sync**: Once online, a bulk sync (`POST /todos/sync`) is triggered to update the server.
+5.  **Reactive Refresh**: Upon successful sync, the Home screen silently re-fetches data to prevent timestamp conflicts.
 
 ---
 
 ## 📍 Geofencing & Notifications
 
-The app provides real-time location awareness via the `GeofenceService`:
-
-*   **Background Monitoring**: Uses the `geolocator` package to track the device's position even when the app is in the background.
-*   **Evaluation Logic**: The service compares current GPS coordinates against a list of user-defined "Active Locations" and their specific radii.
-*   **Local Notifications**: When a user enters a geofence, the `NotificationService` triggers a high-priority system alert using `flutter_local_notifications`.
-*   **Auth Awareness**: Geofencing automatically starts upon login and stops upon logout to conserve battery life and ensure privacy.
-
----
-
-## ⚙️ Configuration & Environment
-
-*   **API Base URL**: Configured in `lib/core/network/links.dart`.
-*   **Permissions**: 
-    *   **Android**: Requires `ACCESS_FINE_LOCATION`, `ACCESS_BACKGROUND_LOCATION`, and `POST_NOTIFICATIONS` (Android 13+).
-    *   **iOS**: Requires `NSLocationAlwaysAndWhenInUseUsageDescription` and `NSLocationWhenInUseUsageDescription` in `Info.plist`.
+*   **Background Tracking**: Tracks position using `Geolocator` with a 10m distance filter to optimize battery.
+*   **Initial Check**: The app performs an immediate GPS check on startup/login to detect if the user is already inside a geofence.
+*   **Local Notifications**: High-priority alerts via `flutter_local_notifications` trigger upon geofence entry.
+*   **Lifecycle Awareness**: Monitoring starts on login/restart and stops on logout to ensure privacy and battery efficiency.
 
 ---
 
 ## ⚠️ Assumptions & Limitations
 
-1.  **Server Support**: The backend is assumed to support the `/todos/sync` endpoint for bulk updates and individual `PATCH` requests for single updates.
-2.  **GPS Accuracy**: Geofence accuracy depends on the hardware's GPS signal. Indoor or high-density urban environments may experience slight delays in entry/exit detection.
-3.  **Battery Optimization**: While background monitoring is optimized, extended use of high-accuracy GPS may impact battery life. Users are recommended to use "Power Saving" modes carefully.
-4.  **Notification Permissions**: The app prompts for notification permissions on the first run. If denied, geofence alerts will not appear until enabled in system settings.
+1.  **Background Permissions**: For background geofencing to work on Android 11+, the user must manually select "Allow all the time" in location settings.
+2.  **GPS Accuracy**: Geofence triggers rely on the device's GPS precision, which may vary indoors.
+3.  **Sync Conflicts**: The app uses a "Last-Write-Wins" approach based on UTC ISO8601 timestamps to resolve sync conflicts.
