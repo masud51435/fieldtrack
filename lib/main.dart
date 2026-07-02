@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
           initialBinding: InitialBindings(),
 
           // Routing
-          initialRoute: BaseRoute.login,
+          initialRoute: BaseRoute.splash,
           getPages: routesHandler,
 
           // Theme

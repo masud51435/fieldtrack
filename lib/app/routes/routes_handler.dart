@@ -8,8 +8,15 @@ import '../../features/auth/presentation/sign_up/bindings/signup_binding.dart';
 import '../../features/dashboard/binding/dashboard_binding.dart';
 import '../../features/location/presentation/bindings/add_location_binding.dart';
 import '../../features/location/presentation/bindings/edit_location_binding.dart';
+import '../../features/splash/presentation/binding/splash_binding.dart';
 
 List<GetPage> routesHandler = [
+  GetPage(
+    name: BaseRoute.splash,
+    page: () => RoutesConfig.splash,
+    binding: SplashBinding(),
+    transition: Transition.fadeIn,
+  ),
   GetPage(
     name: BaseRoute.login,
     page: () => RoutesConfig.login,
