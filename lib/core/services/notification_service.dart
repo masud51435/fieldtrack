@@ -23,17 +23,16 @@ class NotificationService extends GetxService {
           iOS: initializationSettingsIOS,
         );
 
-    await _notificationsPlugin.initialize(
-      settings: initializationSettings,
-      onDidReceiveNotificationResponse: _onNotificationTapped,
-    );
+    await _notificationsPlugin.initialize(settings: initializationSettings);
+
+    // Request Android 13+ permission
+    await _notificationsPlugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >()
+        ?.requestNotificationsPermission();
 
     return this;
-  }
-
-  /// Callback when a notification is tapped
-  void _onNotificationTapped(NotificationResponse details) {
-    // Implement navigation logic here if needed
   }
 
   /// Show a simple local notification

@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 
@@ -23,10 +22,15 @@ class GeofenceService extends GetxService {
     await _checkPermissions();
 
     // Only fetch if we are already logged in (app restart case)
-    final authData = await Get.find<AuthPersistData>().getAuthData();
-    if (authData.accessToken.isNotEmpty) {
-      await updateMonitoredLocations();
-      _startMonitoring();
+    try {
+      final authData = await Get.find<AuthPersistData>().getAuthData();
+      if (authData.accessToken.isNotEmpty) {
+        await updateMonitoredLocations();
+        _startMonitoring();
+      }
+    } catch (_) {
+      // User is not logged in yet, which is fine during init.
+      // Geofencing will start automatically after a successful login.
     }
 
     return this;
@@ -61,9 +65,7 @@ class GeofenceService extends GetxService {
         _startMonitoring();
       }
     } catch (e) {
-      if (kDebugMode) {
-        print("GeofenceService: Error fetching locations: $e");
-      }
+      // Error fetching locations
     }
   }
 
@@ -75,8 +77,20 @@ class GeofenceService extends GetxService {
     _insideLocations.clear();
   }
 
-  void _startMonitoring() {
+  void _startMonitoring() async {
     _positionStream?.cancel();
+
+    // Check initial position immediately
+    try {
+      final initialPosition = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
+      );
+      _evaluateGeofences(initialPosition);
+    } catch (e) {
+      // Error getting initial position
+    }
 
     const LocationSettings locationSettings = LocationSettings(
       accuracy: LocationAccuracy.high,
