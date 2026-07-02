@@ -106,11 +106,36 @@ class LocationScreen extends GetView<LocationController> {
               child: RefreshIndicator(
                 onRefresh: controller.refreshLocations,
                 child: Obx(() {
-                  if (controller.isLoading.value ||
-                      controller.allLocations.isEmpty) {
+                  if (controller.isLoading.value) {
                     return Padding(
                       padding: EdgeInsets.symmetric(horizontal: 24.w),
                       child: const LocationShimmer(),
+                    );
+                  }
+
+                  if (controller.allLocations.isEmpty) {
+                    return ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      children: [
+                        SizedBox(height: 100.h),
+                        Center(
+                          child: Column(
+                            children: [
+                              Icon(Icons.location_off_outlined, size: 64.sp, color: AppColors.primary.withValues(alpha: 0.5)),
+                              SizedBox(height: 16.h),
+                              Text(
+                                'No locations added',
+                                style: TextStyle(
+                                  fontSize: 16.sp,
+                                  color: isDark
+                                      ? AppColors.textSecondaryDark
+                                      : AppColors.textSecondaryLight,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     );
                   }
 

@@ -21,8 +21,33 @@ class HomeScreen extends GetView<HomeController> {
       backgroundColor: isDark ? AppColors.bgDark : AppColors.bgLight,
       body: SafeArea(
         child: Obx(() {
-          if (controller.isLoading.value || controller.allTodos.isEmpty) {
+          if (controller.isLoading.value) {
             return const HomeShimmer();
+          }
+
+          if (controller.allTodos.isEmpty) {
+            return RefreshIndicator(
+              onRefresh: controller.refreshData,
+              child: Center(
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Column(
+                    children: [
+                      Icon(Icons.assignment_outlined, size: 64.sp, color: AppColors.primary.withValues(alpha: 0.5)),
+                      SizedBox(height: 16.h),
+                      Text(
+                        'No tasks assigned yet',
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600,
+                          color: isDark ? Colors.white70 : Colors.black54,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
           }
 
           return RefreshIndicator(
