@@ -45,6 +45,6 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
       payload: {'changes': changes},
       parse: (json) => json,
     );
-    return response as Map<String, dynamic>;
+    return response;
   }
 }
