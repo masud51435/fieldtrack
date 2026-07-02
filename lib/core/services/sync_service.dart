@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:fieldtrack/core/errors/failures.dart';
 import 'package:fieldtrack/core/storage/auth_persist_data.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -105,6 +106,14 @@ class SyncService extends GetxService {
       }
       _updateLastSyncTime();
     } catch (e) {
+      if (e is ConflictFailure) {
+        // CONFLICT: Local data is out of sync with server.
+        // Don't queue, instead trigger a refresh to get the latest state.
+        debugPrint("Sync conflict detected for $todoId. Refreshing...");
+        _updateLastSyncTime();
+        return;
+      }
+
       // API FAILED (Timeout, Server Error, etc.): Save to queue
       debugPrint("Individual update failed, adding to sync queue: $e");
       await _addToQueue(todoId, isCompleted, title, updatedAt);
@@ -155,6 +164,12 @@ class SyncService extends GetxService {
       _updateLastSyncTime();
       debugPrint("Bulk sync successful: ${changes.length} items");
     } catch (e) {
+      if (e is ConflictFailure) {
+        debugPrint("Bulk sync conflict! Clearing queue to prevent loop.");
+        await _syncBox.clear();
+        _updatePendingList();
+        _updateLastSyncTime();
+      }
       debugPrint("Bulk sync failed: $e");
     }
   }

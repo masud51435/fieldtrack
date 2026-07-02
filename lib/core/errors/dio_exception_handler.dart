@@ -106,6 +106,14 @@ class DioExceptionHandler {
           stackTrace: e.stackTrace,
           hasErrorKey: hasErrorKey,
         );
+      case 409:
+        return ConflictFailure.withDebug(
+          message: message,
+          statusCode: statusCode,
+          debugMessage: e.message,
+          stackTrace: e.stackTrace,
+          hasErrorKey: hasErrorKey,
+        );
       case 500:
       case 502:
       case 503:

@@ -19,6 +19,7 @@ class HomeController extends GetxController {
 
   // State
   final isLoading = false.obs;
+  final processingIds = <String>{}.obs;
   final allTodos = <TodoEntity>[].obs;
   final filteredTodos = <TodoEntity>[].obs;
   final selectedFilter = 'All'.obs;
@@ -54,9 +55,13 @@ class HomeController extends GetxController {
   }
 
   Future<void> toggleTodo(TodoEntity todo) async {
+    if (processingIds.contains(todo.id)) return;
+
     final oldStatus = todo.isCompleted;
     final newStatus = !oldStatus;
     final updatedAt = DateTime.now().toUtc().toIso8601String();
+
+    processingIds.add(todo.id);
 
     // 1. Optimistic UI Update
     final index = allTodos.indexWhere((t) => t.id == todo.id);
@@ -73,11 +78,17 @@ class HomeController extends GetxController {
       _applyFilter();
     }
 
-    // 2. Process update (Try PATCH if online, otherwise save to Queue)
-    await _syncService.processUpdate(todo.id, newStatus, todo.title, updatedAt);
-
-    // Note: SyncService.addChange calls syncNow() internally,
-    // which tries to hit the API if online.
+    try {
+      // 2. Process update (Try PATCH if online, otherwise save to Queue)
+      await _syncService.processUpdate(
+        todo.id,
+        newStatus,
+        todo.title,
+        updatedAt,
+      );
+    } finally {
+      processingIds.remove(todo.id);
+    }
   }
 
   void setFilter(String filter) {

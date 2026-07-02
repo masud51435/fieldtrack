@@ -116,6 +116,24 @@ class ForbiddenFailure extends Failures {
        );
 }
 
+class ConflictFailure extends Failures {
+  ConflictFailure([String? message]) : super(message ?? "Data conflict occurred");
+
+  ConflictFailure.withDebug({
+    String? message,
+    int? statusCode,
+    String? debugMessage,
+    StackTrace? stackTrace,
+    bool hasErrorKey = false,
+  }) : super(
+         message ?? "Data conflict occurred",
+         statusCode: statusCode,
+         debugMessage: debugMessage,
+         stackTrace: stackTrace,
+         hasErrorKey: hasErrorKey,
+       );
+}
+
 class NotFoundFailure extends Failures {
   NotFoundFailure([String? message]) : super(message ?? "Content not found");
 
