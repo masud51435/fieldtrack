@@ -165,5 +165,13 @@ class SyncService extends GetxService {
     _metaBox.put('last_sync_timestamp', now.toIso8601String());
   }
 
+  /// Clear all pending changes and metadata (usually on logout)
+  Future<void> clearQueue() async {
+    await _syncBox.clear();
+    await _metaBox.clear();
+    lastSyncTime.value = null;
+    _updatePendingList();
+  }
+
   int get pendingCount => pendingChanges.length;
 }
