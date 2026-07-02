@@ -16,7 +16,7 @@ class GeofenceService extends GetxService {
   GeofenceService({required this.getAllLocationUseCases});
 
   StreamSubscription<Position>? _positionStream;
-  List<LocationEntity> _monitoredLocations = [];
+  final monitoredLocations = <LocationEntity>[].obs;
   final Set<String> _insideLocations = {};
 
   Future<GeofenceService> init() async {
@@ -52,10 +52,12 @@ class GeofenceService extends GetxService {
   Future<void> updateMonitoredLocations() async {
     try {
       final result = await getAllLocationUseCases(NoParams());
-      _monitoredLocations = result.locations.where((l) => l.isActive).toList();
+      monitoredLocations.assignAll(
+        result.locations.where((l) => l.isActive).toList(),
+      );
 
       // If we have locations and stream isn't running, start it
-      if (_monitoredLocations.isNotEmpty && _positionStream == null) {
+      if (monitoredLocations.isNotEmpty && _positionStream == null) {
         _startMonitoring();
       }
     } catch (e) {
@@ -69,7 +71,7 @@ class GeofenceService extends GetxService {
   void stopMonitoring() {
     _positionStream?.cancel();
     _positionStream = null;
-    _monitoredLocations.clear();
+    monitoredLocations.clear();
     _insideLocations.clear();
   }
 
@@ -90,9 +92,9 @@ class GeofenceService extends GetxService {
   }
 
   void _evaluateGeofences(Position position) {
-    if (_monitoredLocations.isEmpty) return;
+    if (monitoredLocations.isEmpty) return;
 
-    for (var location in _monitoredLocations) {
+    for (var location in monitoredLocations) {
       double distance = Geolocator.distanceBetween(
         position.latitude,
         position.longitude,

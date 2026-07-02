@@ -61,8 +61,8 @@ class ProfileScreen extends GetView<ProfileController> {
                       label: "Tasks done today",
                     ),
                     SizedBox(width: 16.w),
-                    const ProfileStatCard(
-                      value: "3", // Placeholder for locations
+                    ProfileStatCard(
+                      value: controller.activeLocationsCount.toString(),
                       label: "Active locations",
                     ),
                   ],

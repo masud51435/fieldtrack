@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 
 import '../../../../app/routes/routes.dart';
+import '../../../../core/services/geofence_service.dart';
 import '../../../../core/usecases/usecase.dart';
 import '../../../auth/domain/usecases/logout_usecase.dart';
 import '../../../home/presentation/controller/home_controller.dart';
@@ -48,6 +49,10 @@ class ProfileController extends GetxController {
 
   int get completedTasks => Get.find<HomeController>().completedCount;
   int get totalTasks => Get.find<HomeController>().totalCount;
+
+  // Dynamic active locations count
+  int get activeLocationsCount =>
+      Get.find<GeofenceService>().monitoredLocations.length;
 
   // Logout method
   Future<void> logout() async {
