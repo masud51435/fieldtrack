@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import '../../features/auth/presentation/login/view/login_screen.dart';
 import '../../features/auth/presentation/sign_up/view/signup_screen.dart';
 import '../../features/dashboard/view/dashboard_screen.dart';
