@@ -60,7 +60,6 @@ class LoginController extends GetxController {
       // Navigate to Dashboard
       Get.offAllNamed(BaseRoute.dashboard);
     } catch (e) {
-      // Errors are handled by ApiErrorHandler + ToastService automatically
       debugPrint("Login Error: $e");
     } finally {
       isLoading.value = false;
